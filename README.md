@@ -11,6 +11,7 @@ Install the local NeuroBrain package into AstrBot's Python environment. From the
 ```powershell
 $neuroBrainRepo = "C:\path\to\NeuroBrain"
 git clone https://github.com/murphys7017/NeuroBrain.git $neuroBrainRepo
+git -C $neuroBrainRepo checkout 8e65be42b3a4236e41f1730b57c9aeda0a734575
 uv pip install --python .venv\Scripts\python.exe --no-deps $neuroBrainRepo
 ```
 
@@ -45,3 +46,7 @@ state = plugin.readonly_api.get_state("persona:Alice pro") if plugin else None
 ```
 
 `get_state()`, `list_states()`, and `fetch_state()` read the in-process state. `wait_for_persona_result()` waits for the update associated with one AstrBot Persona result and returns that result's snapshot; AG99live uses this on its third motion chain. State writes remain owned by the NeuroBrain plugin.
+
+## License
+
+This plugin is licensed under the MIT License. See [LICENSE](LICENSE).
