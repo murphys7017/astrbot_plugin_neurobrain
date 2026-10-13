@@ -11,7 +11,7 @@ Install the local NeuroBrain package into AstrBot's Python environment. From the
 ```powershell
 $neuroBrainRepo = "C:\path\to\NeuroBrain"
 git clone https://github.com/murphys7017/NeuroBrain.git $neuroBrainRepo
-git -C $neuroBrainRepo checkout e1790b4f906266f477d0e4f39bac23a1c2e50384
+git -C $neuroBrainRepo checkout 368e4b730a770cf76bf3dcf66d58a43975f5ab0b
 uv pip install --python .venv\Scripts\python.exe --no-deps $neuroBrainRepo
 ```
 
