@@ -37,6 +37,8 @@ Each Persona speech segment advances the selected state once. AstrBot's tendency
 
 ## Read-Only API
 
+OLV Persona segment streaming keeps the result hook enabled: it observes the complete result once at stream end and submits its tendency values asynchronously. The hook declares `persona_segment_stream_safe=True` because it neither changes published segments nor stops the event. This does not update NeuroBrain per streamed segment; early motion requests may reach their bounded wait before the terminal state update exists.
+
 Other plugins can read current snapshots without advancing NeuroBrain:
 
 ```python
