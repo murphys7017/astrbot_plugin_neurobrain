@@ -4,6 +4,19 @@ AstrBot owns Persona's eight-dimensional `tendency` input. This plugin runs one 
 
 This plugin targets the customized AstrBot 4.29.0-beta.1 environment used by this project. It is not a compatibility claim for unmodified upstream AstrBot.
 
+## Source and deployment
+
+The source of truth for this plugin is this repository at
+`C:\Users\Administrator\Documents\GitHub\astrbot_plugin_neurobrain`. The copy at
+`C:\Users\Administrator\Downloads\AstrBot\data\plugins\astrbot_plugin_neurobrain`
+is generated deployment output. Edit the source repository and commit there; the local
+`post-commit` hook runs `deploy_neurobrain.ps1` and synchronizes the plugin files into
+AstrBot. Do not edit the generated copy as source.
+
+The deployment script skips test and Python cache directories and excludes itself from the
+runtime plugin. It removes stale managed plugin files but does not touch files outside this
+plugin directory.
+
 ## Install
 
 Install the local NeuroBrain package into AstrBot's Python environment. From the AstrBot repository root:
