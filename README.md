@@ -44,7 +44,9 @@ Prompt extensions follow AstrBot's plugin admission policy. The default `plugin_
 
 There is one model and one current state. No session ID, Persona ID, state key, result ID, or result-wait API is needed.
 
-AstrBot owns emotion input; the Persona result hook submits each segment once:
+AstrBot owns emotion input. The normal Persona result hook submits each completed
+segment once, and the OLV streaming hook submits each validated `segment_start`
+intent once before speech delivery:
 
 ```python
 plugin.submit_emotion({

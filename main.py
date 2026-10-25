@@ -17,9 +17,21 @@ from astrbot.core.prompt.interfaces import PromptExtensionCollectorInterface
 from .client import NeuroBrainReadOnlyAPI
 from .runtime import NeuroBrainRuntime
 
+CURRENT_STATE_PROMPT_CONTEXT_VIEWS = frozenset(
+    {
+        "turn_plan",
+        "olv_stream",
+        "final_result",
+        "progress",
+        "proactive",
+    }
+)
+
 
 class _CurrentStatePromptCollector(PromptExtensionCollectorInterface):
     """Read the latest state for each prompt build without using a cache."""
+
+    prompt_extension_context_views = CURRENT_STATE_PROMPT_CONTEXT_VIEWS
 
     def __init__(self, plugin: NeuroBrainPlugin) -> None:
         self._plugin = plugin
@@ -70,12 +82,15 @@ class _CurrentStatePromptCollector(PromptExtensionCollectorInterface):
         return [
             PromptExtension(
                 plugin_id=self.plugin_id,
-                mount="system",
+                mount="context",
                 title="角色当前状态",
                 value=text,
                 value_kind="text",
                 order=30,
-                meta={"targets": ["core", "persona"]},
+                meta={
+                    "targets": ["core", "persona"],
+                    "context_views": sorted(self.prompt_extension_context_views),
+                },
             )
         ]
 
@@ -168,13 +183,30 @@ class NeuroBrainPlugin(Star):
         for segment in segments:
             if not isinstance(segment, Mapping):
                 continue
-            tendency = segment.get("tendency")
-            if not isinstance(tendency, Mapping):
-                continue
-            try:
-                self.submit_emotion(tendency)
-            except (TypeError, ValueError, RuntimeError) as exc:
-                logger.warning("NeuroBrain emotion input rejected: %s", exc)
+            self._submit_segment_tendency(segment.get("tendency"))
+
+    @filter.on_persona_expression_segment_intent_ready(
+        persona_segment_stream_safe=True
+    )
+    async def on_persona_expression_segment_intent_ready(
+        self,
+        event: AstrMessageEvent,
+        *,
+        tendency: Any,
+        **_: Any,
+    ) -> None:
+        """Accept OLV stream segment intent before its speech is delivered."""
+        del event
+        if self.is_ready:
+            self._submit_segment_tendency(tendency)
+
+    def _submit_segment_tendency(self, tendency: Any) -> None:
+        if not isinstance(tendency, Mapping):
+            return
+        try:
+            self.submit_emotion(tendency)
+        except (TypeError, ValueError, RuntimeError) as exc:
+            logger.warning("NeuroBrain emotion input rejected: %s", exc)
 
     def get_state(self) -> dict[str, Any] | None:
         return self._runtime.get_state() if self._runtime is not None else None
