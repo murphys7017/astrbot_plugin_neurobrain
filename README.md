@@ -38,7 +38,13 @@ The model loads on its dedicated thread when the plugin initializes. It publishe
 
 Input and reading are independent. AstrBot submits exactly eight integer emotions from `0` through `10`; the converter clamps out-of-range integers and normalizes to `0..1`. The runtime keeps one pending input slot, so stale inputs are discarded before the next model tick. Each completed update replaces the published snapshot as a whole. Reads copy the last complete snapshot immediately, never wait for inference, and never advance the model. Runtime state is in memory and starts fresh after reload. A missing or invalid checkpoint leaves the plugin unready; startup errors are logged.
 
-Prompt extensions follow AstrBot's plugin admission policy. The default `plugin_set=["*"]` allows this plugin; if using a plugin whitelist, include `astrbot_plugin_neurobrain` and ensure the current session has not disabled it.
+The live NeuroBrain state is injected as a request-local, non-persistent message
+after AstrBot selects and renders the cached ContextPack, and is refreshed again
+before each Persona provider request. This keeps the stable system/persona/history context reusable while each Persona request reads the
+latest state. It explicitly targets Persona only and never enters Core Planner,
+Core Router, or Personal Policy. The default `plugin_set=["*"]` allows this plugin; if using a
+plugin whitelist, include `astrbot_plugin_neurobrain` and ensure the current
+session has not disabled it.
 
 ## Application API
 
