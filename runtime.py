@@ -86,10 +86,14 @@ class NeuroBrainRuntime:
                 self._checkpoint, device=device, delta_seconds=self._delta_seconds
             )
             zero = dict.fromkeys(CURRENT_STIMULUS_DIMENSIONS, 0.0)
+            revision = 0
             last_tendency: dict[str, int] = {}
 
             def advance(stimulus: dict[str, float]) -> None:
+                nonlocal revision
                 snapshot = session.update(stimulus).as_dict()
+                revision += 1
+                snapshot["revision"] = revision
                 snapshot["updated_at"] = datetime.now(timezone.utc).isoformat()
                 snapshot["last_tendency"] = dict(last_tendency)
                 # Never mutate a published object. A read can keep the old one
