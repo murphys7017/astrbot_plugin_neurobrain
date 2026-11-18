@@ -1,5 +1,7 @@
 # NeuroBrain for AstrBot
 
+Maintained by murphys7017 for AG99. The plugin queues emotional input as each reply segment reaches the desktop and exposes a versioned state snapshot to motion consumers. [NeuroBrain model](https://github.com/murphys7017/NeuroBrain) · [AG99live desktop](https://github.com/murphys7017/AG99live)
+
 AstrBot owns Persona's eight-dimensional `tendency` input. This plugin runs one NeuroBrain model on a dedicated thread, submits Persona emotions without waiting for inference, and reads its current state into eligible prompts. Other plugins have read-only access. No NeuroBrain service or WebSocket connection is required.
 
 This plugin targets the customized AstrBot 4.29.0-beta.1 environment used by this project. It is not a compatibility claim for unmodified upstream AstrBot.
